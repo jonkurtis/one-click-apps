@@ -1,10 +1,19 @@
 captainVersion: 4
 services:
+    $$cap_appname-studio:
+        image: supabase/studio:$$cap_studio_version
+        restart: unless-stopped
+        ports:
+          - $$cap_studio_http_port:3000/tcp
+        environment:
+          SUPABASE_URL: srv-captain--$$cap_appname-kong:$$cap_kong_http_port
+          STUDIO_PG_META_URL: srv-captain--$$cap_appname-pg-meta:$$cap_pg_meta_port
+          SUPABASE_SERVICE_KEY: $$cap_studio_service_role_key
     $$cap_appname-kong:
         image: kong:$$cap_kong_version
         volumes:
             - $$cap_appname-kong-config:/var/lib/kong
-        restart: always
+        restart: unless stopped
         ports:
             - $$cap_kong_http_port:8000
             - $$cap_kong_https_port:8443
@@ -22,7 +31,7 @@ services:
         image: supabase/gotrue:$$cap_auth_version
         depends_on:
             - $$cap_appname-db
-        restart: always
+        restart: unless stopped
         environment:
             GOTRUE_API_HOST: $$cap_gotrue_api_host
             GOTRUE_API_PORT: $$cap_gotrue_api_port
@@ -54,7 +63,7 @@ services:
         image: postgrest/postgrest:$$cap_postgrest_version
         depends_on:
             - $$cap_appname-db
-        restart: always
+        restart: unless stopped
         environment:
             PGRST_DB_URI: postgres://$$cap_pg_user:$$cap_pg_pass@srv-captain--$$cap_appname-db:5432/$$cap_pg_db
             PGRST_DB_SCHEMA: public, storage
@@ -66,7 +75,7 @@ services:
         image: supabase/realtime:$$cap_realtime_version
         depends_on:
             - $$cap_appname-db
-        restart: always
+        restart: unless stopped
         environment:
             DB_HOST: srv-captain--$$cap_appname-db
             DB_PORT: 5432
@@ -84,7 +93,7 @@ services:
         depends_on:
             - $$cap_appname-db
             - $$cap_appname-rest
-        restart: always
+        restart: unless stopped
         volumes:
             - $$cap_appname-storage:/var/lib/storage
         environment:
@@ -104,6 +113,20 @@ services:
             GLOBAL_S3_BUCKET: stub
         caproverExtra:
             containerHttpPort: 5000
+  $$cap_appname-pg-meta:
+        image: supabase/postgres-meta:$$cap_pg_meta_version
+        depends_on:
+            - $$cap_appname-db
+        restart: unless-stopped
+        environment:
+            PG_META_DB_NAME: $$cap_pg_db
+            PG_META_DB_USER: $$cap_pg_user
+            PG_META_DB_PASSWORD: $$cap_pg_pass
+            PG_META_DB_PORT: 5432
+            PG_META_DB_HOST: srv-captain--$$cap_appname-db
+            PG_META_PORT: $$cap_pg_meta_port
+        caproverExtra:
+            containerHttpPort: $$cap_pg_meta_port
     $$cap_appname-db:
         # not using postgres image because supabase/postgres
         # has some additional initdb script
@@ -111,7 +134,7 @@ services:
         volumes:
             - $$cap_appname-db-data:/var/lib/postgresql/data
             - $$cap_appname-db-init:/docker-entrypoint-initdb.d
-        restart: always
+        restart: unless stopped
         environment:
             POSTGRES_USER: $$cap_pg_user
             POSTGRES_PASSWORD: $$cap_pg_pass
@@ -125,6 +148,22 @@ caproverOneClickApp:
         - id: $$cap_jwt_secret
           label: JWT secret
           defaultValue: $$cap_gen_random_hex(32)
+          validRegex: /^([^\s^\/])+$/
+
+        # studio variables
+        - id: $$cap_studio_version
+          label: Studio Version
+          defaultValue: 'latest'
+          description: Check out their Docker page for the valid tags https://hub.docker.com/r/supabase/studio/tags
+          validRegex: /^([^\s^\/])+$/
+        - id: $$cap_studio_http_port
+          label: Studio Port
+          defaultValue: '3000'
+          validRegex: /^\d+$/
+        - id: $$cap_studio_service_role_key
+          label: Studio Service Role Key
+          defaultValue: ''
+          description: Generate SERVICE_KEY using your JWT secret at https://supabase.io/docs/guides/hosting/overview#api-keys
           validRegex: /^([^\s^\/])+$/
 
         # kong variables
@@ -165,7 +204,7 @@ caproverOneClickApp:
         # auth variables
         - id: $$cap_auth_version
           label: Auth Version
-          defaultValue: 'v2.1.8'
+          defaultValue: 'v2.2.6'
           description: Check out their Docker page for the valid tags https://hub.docker.com/r/supabase/gotrue/tags
           validRegex: /^([^\s^\/])+$/
         - id: $$cap_gotrue_api_host
@@ -230,14 +269,14 @@ caproverOneClickApp:
         # postgrest variables
         - id: $$cap_postgrest_version
           label: Postgrest Version
-          defaultValue: 'v8.0.0'
+          defaultValue: 'v8.0.0.20211102'
           description: Check out their Docker page for the valid tags https://hub.docker.com/r/postgrest/postgrest/tags
           validRegex: /^([^\s^\/])+$/
 
         # realtime variables
         - id: $$cap_realtime_version
           label: Storage Realtime Version
-          defaultValue: 'v0.15.0'
+          defaultValue: 'v0.19.0'
           description: Check out their Docker page for the valid tags https://hub.docker.com/r/supabase/realtime/tags
           validRegex: /^([^\s^\/])+$/
 
@@ -284,6 +323,17 @@ caproverOneClickApp:
           label: "OPTIONAL: Arguments for 'postgres initdb'"
           description: For example, --data-checksums
           validRegex: /.{0,}/
+          
+        # pg-meta variables
+        - id: $$cap_pg_meta_version
+          label: Postgres Meta Version
+          defaultValue: 'v0.28.0'
+          description: Check out their Docker page for the valid tags https://hub.docker.com/r/supabase/postgres-meta/tags
+          validRegex: /^([^\s^\/])+$/
+        - id: $$cap_pg_meta_port
+          label: Postgres Meta Port
+          defaultValue: '8080'
+          validRegex: /^\d+$/
     instructions:
         start: >-
             Supabase is an open source Firebase alternative.
