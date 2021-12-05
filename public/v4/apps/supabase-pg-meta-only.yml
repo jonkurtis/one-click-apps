@@ -1,6 +1,6 @@
 captainVersion: 4
 services:
-  $$cap_appname-pg-meta:
+    $$cap_appname-pg-meta:
         image: supabase/postgres-meta:$$cap_pg_meta_version
         depends_on:
             - $$cap_db_appname
@@ -50,7 +50,7 @@ caproverOneClickApp:
           label: Postgres Default Database
           defaultValue: 'postgres'
           validRegex: /.{1,}/
-        -id: $$cap_pg_host
+        - id: $$cap_pg_host
           label: Postgres Host Name
           defaultValue: srv-captain--$$cap_appname-db
           validRegex: /^([^\s^\/])+$/

@@ -4,12 +4,13 @@ services:
         image: supabase/studio:$$cap_studio_version
         restart: unless-stopped
         ports:
-          - $$cap_studio_http_port:3000/tcp
+            - $$cap_studio_http_port:3000/tcp
         environment:
-          SUPABASE_URL: $$cap_internal_kong_host:$$cap_kong_http_port
-          STUDIO_PG_META_URL: $$cap_internal_pg_meta_host:$$cap_pg_meta_port
-          SUPABASE_SERVICE_KEY: $$cap_studio_service_role_key
-
+            SUPABASE_URL: $$cap_internal_kong_host:$$cap_kong_http_port
+            STUDIO_PG_META_URL: $$cap_internal_pg_meta_host:$$cap_pg_meta_port
+            SUPABASE_SERVICE_KEY: $$cap_studio_service_role_key
+        caproverExtra:
+            containerHttpPort: $$cap_studio_http_port
 caproverOneClickApp:
     variables:
         # shared env
@@ -49,7 +50,6 @@ caproverOneClickApp:
           defaultValue: ''
           description: Generate SERVICE_KEY using your JWT secret at https://supabase.io/docs/guides/hosting/overview#api-keys
           validRegex: /^([^\s^\/])+$/
-
     instructions:
         start: >-
             Supabase is an open source Firebase alternative.
