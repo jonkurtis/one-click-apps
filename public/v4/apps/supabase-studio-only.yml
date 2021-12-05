@@ -1,0 +1,61 @@
+captainVersion: 4
+services:
+    $$cap_appname-studio:
+        image: supabase/studio:$$cap_studio_version
+        restart: unless-stopped
+        ports:
+          - $$cap_studio_http_port:3000/tcp
+        environment:
+          SUPABASE_URL: $$cap_internal_kong_host:$$cap_kong_http_port
+          STUDIO_PG_META_URL: $$cap_internal_pg_meta_host:$$cap_pg_meta_port
+          SUPABASE_SERVICE_KEY: $$cap_studio_service_role_key
+
+caproverOneClickApp:
+    variables:
+        # shared env
+        - id: $$cap_jwt_secret
+          label: JWT secret
+          defaultValue: $$cap_gen_random_hex(32)
+          validRegex: /^([^\s^\/])+$/
+
+        # studio variables
+        - id: $$cap_studio_version
+          label: Studio Version
+          defaultValue: 'latest'
+          description: Check out their Docker page for the valid tags https://hub.docker.com/r/supabase/studio/tags
+          validRegex: /^([^\s^\/])+$/
+        - id: $$cap_studio_http_port
+          label: Studio Port
+          defaultValue: '3000'
+          validRegex: /^\d+$/
+        - id: $$cap_kong_host
+          label: Internal Kong URL
+          defaultValue: ''
+          validRegex: /^([^\s^\/])+$/
+        - id: $$cap_kong_http_port
+          label: Studio Port
+          defaultValue: '8000'
+          validRegex: /^\d+$/
+        - id: $$cap__pg_meta_host
+          label: Internal PG Meta URL
+          defaultValue: ''
+          validRegex: /^([^\s^\/])+$/
+        - id: $$cap_pg_meta_http_port
+          label: Studio Port
+          defaultValue: '8080'
+          validRegex: /^\d+$/
+        - id: $$cap_studio_service_role_key
+          label: Studio Service Role Key
+          defaultValue: ''
+          description: Generate SERVICE_KEY using your JWT secret at https://supabase.io/docs/guides/hosting/overview#api-keys
+          validRegex: /^([^\s^\/])+$/
+
+    instructions:
+        start: >-
+            Supabase is an open source Firebase alternative.
+        end: >
+            Supabase Studio is deployed.
+    displayName: Supabase Studio
+    isOfficial: false
+    description: Supabase is an open source Firebase alternative.
+    documentation: Taken from https://github.com/supabase/supabase

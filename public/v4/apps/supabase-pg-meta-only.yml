@@ -1,0 +1,65 @@
+captainVersion: 4
+services:
+  $$cap_appname-pg-meta:
+        image: supabase/postgres-meta:$$cap_pg_meta_version
+        depends_on:
+            - $$cap_db_appname
+        restart: unless-stopped
+        environment:
+            PG_META_DB_NAME: $$cap_pg_db
+            PG_META_DB_USER: $$cap_pg_user
+            PG_META_DB_PASSWORD: $$cap_pg_pass
+            PG_META_DB_PORT: 5432
+            PG_META_DB_HOST: $$cap_pg_host
+            PG_META_PORT: $$cap_pg_meta_port
+        caproverExtra:
+            containerHttpPort: $$cap_pg_meta_port
+            notExposeAsWebApp: 'true'
+caproverOneClickApp:
+    variables:
+        # shared env
+        - id: $$cap_jwt_secret
+          label: JWT secret
+          defaultValue: $$cap_gen_random_hex(32)
+          validRegex: /^([^\s^\/])+$/
+          
+        # pg-meta variables
+        - id: $$cap_pg_meta_version
+          label: Postgres Meta Version
+          defaultValue: 'v0.28.0'
+          description: Check out their Docker page for the valid tags https://hub.docker.com/r/supabase/postgres-meta/tags
+          validRegex: /^([^\s^\/])+$/
+        - id: $$cap_db_appname
+          label: Postgres Docker Appname
+          defaultValue: 'srv--captain-$$cap_appname-db'
+          description: The appname of the databse you are connecting to.
+          validRegex: /^([^\s^\/])+$/
+        - id: $$cap_pg_meta_port
+          label: Postgres Meta Port
+          defaultValue: '8080'
+          validRegex: /^\d+$/
+        - id: $$cap_pg_user
+          label: Postgres Username
+          defaultValue: 'postgres'
+          validRegex: /.{1,}/
+        - id: $$cap_pg_pass
+          label: Postgres Password
+          defaultValue: ''
+          validRegex: /.{1,}/
+        - id: $$cap_pg_db
+          label: Postgres Default Database
+          defaultValue: 'postgres'
+          validRegex: /.{1,}/
+        -id: $$cap_pg_host
+          label: Postgres Host Name
+          defaultValue: srv-captain--$$cap_appname-db
+          validRegex: /^([^\s^\/])+$/
+    instructions:
+        start: >-
+            Supabase is an open source Firebase alternative.
+        end: >
+            Supabase is PG Meta is deployed.
+    displayName: Supabase PG Meta
+    isOfficial: false
+    description: Supabase is an open source Firebase alternative.
+    documentation: Taken from https://github.com/supabase/supabase

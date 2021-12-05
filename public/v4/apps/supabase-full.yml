@@ -127,6 +127,7 @@ services:
             PG_META_PORT: $$cap_pg_meta_port
         caproverExtra:
             containerHttpPort: $$cap_pg_meta_port
+            notExposeAsWebApp: 'true'
     $$cap_appname-db:
         # not using postgres image because supabase/postgres
         # has some additional initdb script
