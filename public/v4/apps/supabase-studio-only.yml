@@ -24,11 +24,11 @@ caproverOneClickApp:
           defaultValue: '3000'
           validRegex: /^\d+$/
         - id: $$cap_kong_host
-          label: Internal Kong URL
+          label: Internal Kong Host Name
           defaultValue: ''
           validRegex: /^([^\s^\/])+$/
         - id: $$cap_kong_http_port
-          label: Studio Port
+          label: Kong HTTP Port
           defaultValue: '8000'
           validRegex: /^\d+$/
         - id: $$cap__pg_meta_host
@@ -36,7 +36,7 @@ caproverOneClickApp:
           defaultValue: ''
           validRegex: /^([^\s^\/])+$/
         - id: $$cap_pg_meta_http_port
-          label: Studio Port
+          label: PG Meta Port
           defaultValue: '8080'
           validRegex: /^\d+$/
         - id: $$cap_studio_service_role_key
