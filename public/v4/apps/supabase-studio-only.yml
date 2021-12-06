@@ -26,11 +26,9 @@ caproverOneClickApp:
         - id: $$cap_kong_url
           label: Internal Kong URL
           defaultValue: ''
-          validRegex: /^([^\s^\/])+$/
         - id: $$cap_pg_meta_url
           label: Internal PG Meta URL
           defaultValue: ''
-          validRegex: /^([^\s^\/])+$/
         - id: $$cap_studio_service_role_key
           label: Studio Service Role Key
           defaultValue: ''
