@@ -119,7 +119,7 @@ services:
         image: supabase/postgres-meta:$$cap_pg_meta_version
         depends_on:
             - $$cap_appname-db
-        restart: unless-stopped
+        restart: unless stopped
         environment:
             PG_META_DB_NAME: $$cap_pg_db
             PG_META_DB_USER: $$cap_pg_user

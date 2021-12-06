@@ -2,7 +2,7 @@ captainVersion: 4
 services:
     $$cap_appname-studio:
         image: supabase/studio:$$cap_studio_version
-        restart: unless-stopped
+        restart: unless stopped
         ports:
             - $$cap_studio_http_port:3000/tcp
         environment:

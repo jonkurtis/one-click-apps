@@ -2,7 +2,9 @@ captainVersion: 4
 services:
     $$cap_appname-pg-meta:
         image: supabase/postgres-meta:$$cap_pg_meta_version
-        restart: unless-stopped
+        depends_on:
+            - $$cap_db_appname
+        restart: unless stopped
         environment:
             PG_META_DB_NAME: $$cap_pg_db
             PG_META_DB_USER: $$cap_pg_user
@@ -19,6 +21,11 @@ caproverOneClickApp:
           label: Postgres Meta Version
           defaultValue: 'v0.28.0'
           description: Check out their Docker page for the valid tags https://hub.docker.com/r/supabase/postgres-meta/tags
+          validRegex: /^([^\s^\/])+$/
+        - id: $$cap_db_appname
+          label: Postgres Docker Appname
+          defaultValue: 'srv--captain-$$cap_appname-db'
+          description: The appname of the databse you are connecting to.
           validRegex: /^([^\s^\/])+$/
         - id: $$cap_pg_meta_port
           label: Postgres Meta Port
