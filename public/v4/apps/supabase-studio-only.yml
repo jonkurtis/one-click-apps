@@ -13,12 +13,6 @@ services:
             containerHttpPort: $$cap_studio_http_port
 caproverOneClickApp:
     variables:
-        # shared env
-        - id: $$cap_jwt_secret
-          label: JWT secret
-          defaultValue: $$cap_gen_random_hex(32)
-          validRegex: /^([^\s^\/])+$/
-
         # studio variables
         - id: $$cap_studio_version
           label: Studio Version
