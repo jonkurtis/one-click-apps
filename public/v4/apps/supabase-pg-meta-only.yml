@@ -13,16 +13,9 @@ services:
             PG_META_DB_HOST: $$cap_pg_host
             PG_META_PORT: $$cap_pg_meta_port
         caproverExtra:
-            containerHttpPort: $$cap_pg_meta_port
             notExposeAsWebApp: 'true'
 caproverOneClickApp:
     variables:
-        # shared env
-        - id: $$cap_jwt_secret
-          label: JWT secret
-          defaultValue: $$cap_gen_random_hex(32)
-          validRegex: /^([^\s^\/])+$/
-          
         # pg-meta variables
         - id: $$cap_pg_meta_version
           label: Postgres Meta Version
