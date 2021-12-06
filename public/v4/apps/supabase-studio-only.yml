@@ -4,7 +4,7 @@ services:
         image: supabase/studio:$$cap_studio_version
         restart: unless-stopped
         ports:
-            - $$cap_studio_http_port:3000/tcp
+            - $$cap_studio_http_port:3000
         environment:
             SUPABASE_URL: $$cap_kong_url
             STUDIO_PG_META_URL: $$cap_pg_meta_url
