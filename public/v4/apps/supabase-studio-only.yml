@@ -31,8 +31,8 @@ caproverOneClickApp:
           label: Kong HTTP Port
           defaultValue: '8000'
           validRegex: /^\d+$/
-        - id: $$cap__pg_meta_host
-          label: Internal PG Meta URL
+        - id: $$cap_pg_meta_host
+          label: Internal PG Meta Host Name
           defaultValue: ''
           validRegex: /^([^\s^\/])+$/
         - id: $$cap_pg_meta_http_port
